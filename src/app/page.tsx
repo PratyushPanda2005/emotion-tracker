@@ -1,103 +1,115 @@
-import Image from "next/image";
+'use client'
+import Image from 'next/image'
+import Link from 'next/link'
+import React, { useLayoutEffect, useRef } from 'react'
+import Ava_Logo from "../../public/assets/ava.svg"
+import Hand from "../../public/assets/herosvgs/Select.svg"
+import Select from "../../public/assets/herosvgs/check read.svg"
+import gsap from 'gsap'
+import { SplitText } from "gsap/SplitText";
+gsap.registerPlugin(SplitText);
+const Home = () => {
+   const avaLogo = useRef(null)
+   useLayoutEffect(() => {
+gsap.set(avaLogo.current, {
+  transformOrigin: "50% 100%", 
+  rotationZ: 45,
+});
 
-export default function Home() {
+gsap.from(avaLogo.current, {
+  rotationZ: -45, 
+  repeat: -1,
+  duration: 1.3,
+  yoyo: true,
+  ease: "sine.inOut" 
+});
+
+let hasAnimated = false;
+const splitTextInstances: SplitText[] = [];
+const animationTweens: gsap.core.Tween[] = [];
+
+const runAnimations = () => {
+  if (hasAnimated) return;
+  hasAnimated = true;
+
+  const createSplitAnimation = (selector: string) => {
+    const split = SplitText.create(selector, {
+      type: "words,lines",
+      linesClass: "line",
+      autoSplit: true,
+      mask: "lines"
+    });
+    
+    splitTextInstances.push(split);
+    
+    const tween = gsap.from(split.lines, {
+      duration: 4,
+      yPercent: 100,
+      opacity: 0,
+      stagger: 0.1,
+      ease: "expo.out",
+    });
+    
+    animationTweens.push(tween);
+  };
+
+  createSplitAnimation(".hero");
+  createSplitAnimation(".hero-2");
+  createSplitAnimation(".hero-3");
+};
+
+// Run animations after a brief delay to ensure DOM is ready
+const timer = setTimeout(runAnimations, 50);
+
+// Cleanup function
+return () => {
+  clearTimeout(timer);
+  
+  // Revert all SplitText instances
+  splitTextInstances.forEach(instance => {
+    if (instance.revert) instance.revert();
+  });
+  
+  // Kill all active tweens
+  animationTweens.forEach(tween => tween.kill());
+};
+   },[])
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <section className="min-h-screen relative flex flex-col justify-center items-center font-montserrat gap-4">
+    <div className="max-w-5xl w-full flex justify-between">
+      {/* <div>
+    <Link href="/activity-page" className="text-[#C94A0D] flex gap-2"><span className="bg-white rounded-[100%]"><CircleArrowLeft/></span>Back</Link>
+      </div> */}
+      {/* <div>
+    <Link href="/" className="flex gap-2 text-black">Skip<span className=""><CircleArrowRight color="black"/></span></Link>
+      </div> */}
     </div>
-  );
+    <div
+      style={{
+        backgroundImage: "url(/assets/Subtract.png)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+      className="max-w-5xl p-20 max-sm:p-6 max-lg:p-10"
+    >
+      <div className="flex flex-col gap-10 text-center justify-center items-center ">
+        <Image ref={avaLogo} src={Ava_Logo} alt="Completion logo" />
+        <h1 className="text-3xl font-semibold text-[#005840] hero">
+          Instructions
+        </h1>
+        <h2 className="text-black max-md:text-lg text-xl font-semibold hero-2">
+        Welcome to the Stress scale. This is a quiz to identify our stress levels ranging from high to low and navigate through such situations.
+        </h2>
+        <div className='text-left flex flex-col gap-6 text-black'>
+        <p className='font-semibold max-md:text-lg text-xl flex items-center leading-[120%]'><span><Image src={Hand} alt=''/></span>Read the statements carefully and relate to each of the statements.</p>
+        <p className='font-semibold max-md:text-lg text-xl flex items-center leading-[120%]'><span><Image src={Select} alt=''/></span>Choose the option which best describes your mood.</p>
+        </div>
+       <Link href="/mood-selection" className='bg-[#005840] max-sm:w-full w-[50%] py-3 max-md:text-xl text-2xl font-semibold rounded-3xl'>Start Check In</Link>
+      </div>
+    </div>
+  </section>
+  )
 }
+
+export default Home
